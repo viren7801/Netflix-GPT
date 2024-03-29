@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../utils/firebase";
@@ -23,6 +23,7 @@ const Header = () => {
         navigate("/error");
       });
   };
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -47,6 +48,13 @@ const Header = () => {
 
   const handleGptSearchClick = () => {
     dispatch(toggleGptSearchView());
+  };
+  const handleToggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
+  const handleSignOutClick = () => {
+    handleSignOut();
+    setShowDropdown(false);
   };
 
   const handleLanguageChange = (e) => {
@@ -76,10 +84,24 @@ const Header = () => {
           >
             {showGptSearch ? "Homepage" : "GPT Search"}
           </button>
-          <img className="w-12 h-12" alt="usericon" src={USERICON} />
-          <button onClick={handleSignOut} className="font-bold text-white">
-            (Sign Out)
-          </button>
+          <div className="relative">
+            <img
+              className="w-12 h-12 cursor-pointer"
+              alt="usericon"
+              src={USERICON}
+              onClick={handleToggleDropdown}
+            />
+            {showDropdown && (
+              <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg z-10">
+                <button
+                  className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
+                  onClick={handleSignOutClick}
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
